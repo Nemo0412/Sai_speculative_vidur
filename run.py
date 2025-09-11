@@ -10,7 +10,10 @@ import argparse
 import subprocess
 import sys
 import os
+import json
+import pandas as pd
 from pathlib import Path
+from datetime import datetime
 
 
 def get_model_name(model_input):
@@ -35,6 +38,101 @@ def get_device_name(device_input):
         "a40": "a40"
     }
     return device_mapping.get(device_input.lower(), device_input)
+
+
+def parse_latency_results(output_dir):
+    """Parse and display latency results from simulation output"""
+    try:
+        # Find the most recent output directory
+        output_path = Path(output_dir)
+        if not output_path.exists():
+            print(f"❌ Output directory {output_dir} not found")
+            return None
+            
+        # Get all timestamped directories and find the latest one
+        timestamp_dirs = [d for d in output_path.iterdir() if d.is_dir() and d.name.startswith('2025-')]
+        if not timestamp_dirs:
+            print(f"❌ No simulation results found in {output_dir}")
+            return None
+            
+        latest_dir = max(timestamp_dirs, key=lambda x: x.name)
+        print(f"📁 Reading results from: {latest_dir}")
+        
+        # Read request metrics
+        metrics_file = latest_dir / "request_metrics.csv"
+        if not metrics_file.exists():
+            print(f"❌ Metrics file not found: {metrics_file}")
+            return None
+            
+        df = pd.read_csv(metrics_file)
+        
+        # Calculate latency statistics
+        results = {}
+        
+        if 'prefill_e2e_time' in df.columns:
+            prefill_times = df['prefill_e2e_time'].dropna()
+            if len(prefill_times) > 0:
+                results['prefill'] = {
+                    'mean': prefill_times.mean(),
+                    'median': prefill_times.median(),
+                    'min': prefill_times.min(),
+                    'max': prefill_times.max(),
+                    'std': prefill_times.std(),
+                    'p95': prefill_times.quantile(0.95),
+                    'p99': prefill_times.quantile(0.99)
+                }
+        
+        if 'decode_time_execution_plus_preemption_normalized' in df.columns:
+            decode_times = df['decode_time_execution_plus_preemption_normalized'].dropna()
+            if len(decode_times) > 0:
+                results['decode'] = {
+                    'mean': decode_times.mean(),
+                    'median': decode_times.median(),
+                    'min': decode_times.min(),
+                    'max': decode_times.max(),
+                    'std': decode_times.std(),
+                    'p95': decode_times.quantile(0.95),
+                    'p99': decode_times.quantile(0.99)
+                }
+        
+        # Display results
+        print("\n" + "="*60)
+        print("📊 SIMULATION RESULTS - LATENCY METRICS")
+        print("="*60)
+        
+        if 'prefill' in results:
+            print(f"\n🔵 PREFILL LATENCY (seconds):")
+            print(f"   Mean:    {results['prefill']['mean']:.6f}s")
+            print(f"   Median:  {results['prefill']['median']:.6f}s")
+            print(f"   Min:     {results['prefill']['min']:.6f}s")
+            print(f"   Max:     {results['prefill']['max']:.6f}s")
+            print(f"   P95:     {results['prefill']['p95']:.6f}s")
+            print(f"   P99:     {results['prefill']['p99']:.6f}s")
+            print(f"   Std:     {results['prefill']['std']:.6f}s")
+        
+        if 'decode' in results:
+            print(f"\n🟢 DECODE LATENCY (seconds):")
+            print(f"   Mean:    {results['decode']['mean']:.6f}s")
+            print(f"   Median:  {results['decode']['median']:.6f}s")
+            print(f"   Min:     {results['decode']['min']:.6f}s")
+            print(f"   Max:     {results['decode']['max']:.6f}s")
+            print(f"   P95:     {results['decode']['p95']:.6f}s")
+            print(f"   P99:     {results['decode']['p99']:.6f}s")
+            print(f"   Std:     {results['decode']['std']:.6f}s")
+        
+        # Additional info
+        print(f"\n📈 SIMULATION INFO:")
+        print(f"   Total requests: {len(df)}")
+        print(f"   Prefill tokens: {df['request_num_prefill_tokens'].iloc[0] if 'request_num_prefill_tokens' in df.columns else 'N/A'}")
+        print(f"   Decode tokens:  {df['request_num_decode_tokens'].iloc[0] if 'request_num_decode_tokens' in df.columns else 'N/A'}")
+        
+        print("="*60)
+        
+        return results
+        
+    except Exception as e:
+        print(f"❌ Error parsing results: {e}")
+        return None
 
 
 def run_prefill_simulation(model, device, batch_size, sequence_length, output_dir="simulator_output"):
@@ -81,9 +179,11 @@ def run_prefill_simulation(model, device, batch_size, sequence_length, output_di
     try:
         result = subprocess.run(cmd, check=True, capture_output=True, text=True)
         print("Simulation completed successfully!")
-        print("STDOUT:", result.stdout)
         if result.stderr:
             print("STDERR:", result.stderr)
+        
+        # Parse and display latency results
+        parse_latency_results(output_dir)
         return True
     except subprocess.CalledProcessError as e:
         print(f"Simulation failed with return code {e.returncode}")
@@ -137,9 +237,11 @@ def run_decode_simulation(model, device, batch_size, tokens_to_generate, kv_cach
     try:
         result = subprocess.run(cmd, check=True, capture_output=True, text=True)
         print("Simulation completed successfully!")
-        print("STDOUT:", result.stdout)
         if result.stderr:
             print("STDERR:", result.stderr)
+        
+        # Parse and display latency results
+        parse_latency_results(output_dir)
         return True
     except subprocess.CalledProcessError as e:
         print(f"Simulation failed with return code {e.returncode}")
