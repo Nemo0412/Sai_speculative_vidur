@@ -17,6 +17,20 @@ Vidur is a high-fidelity and extensible LLM inference system simulator. It can h
 
 ... all without access to GPUs except for a quick initial profiling phase 🎉. We highly recommend checking out our [MLSys'24 paper](https://arxiv.org/abs/2405.05465) and [talk](https://mlsys.org/virtual/2024/poster/2667) for more details.
 
+## Quick Start
+
+For a quick start, use our simplified `run.py` script:
+
+```sh
+# Prefill simulation
+python run.py prefill llama-70b H100 --batch_size 4 --sequence_length 256
+
+# Decode simulation  
+python run.py decode llama-70b H100 --batch_size 8 --tokens_to_generate 4 --kv_cache_length 1024
+```
+
+This will run simulations and output latency metrics for prefill and decode operations. See the [Running the simulator](#running-the-simulator) section for more details.
+
 
 ## Supported Models
 
@@ -89,7 +103,40 @@ To opt out of wandb, pick any one of the following methods:
 
 ## Running the simulator
 
-To run the simulator, execute the following command from the repository root,
+### Quick Start with Simplified Interface
+
+For easier usage, we provide a simplified `run.py` script that allows you to run common prefill and decode simulations with simple command-line arguments:
+
+**Prefill Simulation:**
+```sh
+python run.py prefill llama-70b H100 --batch_size 4 --sequence_length 256
+```
+
+**Decode Simulation:**
+```sh
+python run.py decode llama-70b H100 --batch_size 8 --tokens_to_generate 4 --kv_cache_length 1024
+```
+
+**Available Models:**
+- `llama-70b` → meta-llama/Llama-2-70b-hf
+- `llama-7b` → meta-llama/Llama-2-7b-hf
+- `llama3-8b` → meta-llama/Meta-Llama-3-8B
+- `llama3-70b` → meta-llama/Meta-Llama-3-70B
+- `codellama-34b` → codellama/CodeLlama-34b-Instruct-hf
+- `internlm-20b` → internlm/internlm-20b
+- `qwen-72b` → Qwen/Qwen-72B
+
+**Available Devices:**
+- `H100`, `A100`, `A40`
+
+**Get help:**
+```sh
+python run.py --help
+```
+
+### Advanced Usage with Full Parameters
+
+To run the simulator with full control over all parameters, execute the following command from the repository root,
 
 ```sh
 python -m vidur.main
