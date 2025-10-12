@@ -93,6 +93,16 @@ class BaseModelConfig(BaseFixedConfig):
     rope_scaling: Optional[Dict[str, Any]] = None
     partial_rotary_factor: float = 1.0
     no_tensor_parallel: bool = False
+    _model_name: Optional[str] = field(default=None, init=False, repr=False)
+    
+    def get_name(self) -> str:
+        """Return the model name. For YAML configs, this is set during creation."""
+        if self._model_name is not None:
+            return self._model_name
+        # Fall back to class method for hardcoded configs
+        if hasattr(self.__class__, 'get_name') and callable(getattr(self.__class__, 'get_name')):
+            return self.__class__.get_name()
+        return "unknown-model"
     
     @classmethod
     def create_from_yaml(cls, model_name: str, yaml_config: Dict[str, Any]) -> "BaseModelConfig":
@@ -107,7 +117,10 @@ class BaseModelConfig(BaseFixedConfig):
             config_dict['norm'] = str_to_norm_type(config_dict['norm'])
         
         logger.info(f"Creating model config for '{model_name}' from YAML")
-        return cls(**config_dict)
+        instance = cls(**config_dict)
+        # Set the model name for this instance
+        instance._model_name = model_name
+        return instance
     
     @classmethod
     def create_from_name(cls, name: str) -> "BaseModelConfig":

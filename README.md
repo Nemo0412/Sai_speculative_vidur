@@ -31,6 +31,48 @@ python run.py decode llama-70b H100 --batch_size 8 --tokens_to_generate 4 --kv_c
 
 This will run simulations and output latency metrics for prefill and decode operations. See the [Running the simulator](#running-the-simulator) section for more details.
 
+## Custom Model Configuration (NEW!)
+
+Vidur now supports **YAML-based model configuration** for easy customization! You can add or modify model parameters without changing Python code.
+
+### Quick Example: Add Your Custom Model
+
+1. Edit `model_configs.yaml`:
+```yaml
+models:
+  "your-org/your-model-7b":
+    num_layers: 32
+    num_q_heads: 32
+    num_kv_heads: 8
+    embedding_dim: 4096
+    mlp_hidden_dim: 11008
+    max_position_embeddings: 4096
+    use_gated_mlp: true
+    use_bias: false
+    use_qkv_bias: false
+    activation: "silu"
+    norm: "rms_norm"
+    post_attn_norm: true
+    vocab_size: 32768
+    is_neox_style: true
+    rope_theta: 10000.0
+    rope_scaling: null
+    partial_rotary_factor: 1.0
+    no_tensor_parallel: false
+```
+
+2. Run simulations with your custom model:
+```bash
+python run.py prefill your-org/your-model-7b A100 --batch_size 4 --sequence_length 256
+```
+
+📖 **See [MODEL_CONFIG_GUIDE.md](MODEL_CONFIG_GUIDE.md) for complete documentation.**
+
+### Benefits
+- ✅ Add new models without modifying code
+- ✅ Experiment with different configurations easily
+- ✅ All parameters explicitly defined and documented
+- ✅ YAML priority over hardcoded configs (automatic fallback)
 
 ## Supported Models
 
