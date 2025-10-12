@@ -1,11 +1,76 @@
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
+import yaml
+import os
+from pathlib import Path
 
 from vidur.config.base_fixed_config import BaseFixedConfig
 from vidur.logger import init_logger
 from vidur.types import ActivationType, NormType
 
 logger = init_logger(__name__)
+
+# Global variable to cache loaded YAML configs
+_YAML_MODEL_CONFIGS = None
+
+
+def load_yaml_model_configs():
+    """Load model configurations from YAML file"""
+    global _YAML_MODEL_CONFIGS
+    
+    if _YAML_MODEL_CONFIGS is not None:
+        return _YAML_MODEL_CONFIGS
+    
+    # Try to find model_configs.yaml in the project root
+    possible_paths = [
+        Path(__file__).parent.parent.parent / "model_configs.yaml",  # From vidur/config
+        Path.cwd() / "model_configs.yaml",  # Current working directory
+        Path(os.environ.get("VIDUR_CONFIG_DIR", ".")) / "model_configs.yaml",  # Environment variable
+    ]
+    
+    yaml_config_path = None
+    for path in possible_paths:
+        if path.exists():
+            yaml_config_path = path
+            break
+    
+    if yaml_config_path is None:
+        logger.warning(f"model_configs.yaml not found in any of: {possible_paths}. Using hardcoded configs only.")
+        _YAML_MODEL_CONFIGS = {}
+        return _YAML_MODEL_CONFIGS
+    
+    try:
+        with open(yaml_config_path, 'r') as f:
+            data = yaml.safe_load(f)
+            _YAML_MODEL_CONFIGS = data.get('models', {})
+            logger.info(f"Loaded {len(_YAML_MODEL_CONFIGS)} model configurations from {yaml_config_path}")
+            return _YAML_MODEL_CONFIGS
+    except Exception as e:
+        logger.error(f"Error loading model_configs.yaml: {e}. Using hardcoded configs only.")
+        _YAML_MODEL_CONFIGS = {}
+        return _YAML_MODEL_CONFIGS
+
+
+def str_to_activation_type(activation_str: str) -> ActivationType:
+    """Convert string to ActivationType enum"""
+    mapping = {
+        "silu": ActivationType.SILU,
+        "gelu": ActivationType.GELU,
+    }
+    result = mapping.get(activation_str.lower())
+    if result is None:
+        logger.warning(f"Unknown activation type '{activation_str}', defaulting to SILU")
+        return ActivationType.SILU
+    return result
+
+
+def str_to_norm_type(norm_str: str) -> NormType:
+    """Convert string to NormType enum"""
+    mapping = {
+        "rms_norm": NormType.RMS_NORM,
+        "layer_norm": NormType.LAYER_NORM,
+    }
+    return mapping.get(norm_str.lower(), NormType.RMS_NORM)
 
 
 @dataclass
@@ -28,6 +93,43 @@ class BaseModelConfig(BaseFixedConfig):
     rope_scaling: Optional[Dict[str, Any]] = None
     partial_rotary_factor: float = 1.0
     no_tensor_parallel: bool = False
+    
+    @classmethod
+    def create_from_yaml(cls, model_name: str, yaml_config: Dict[str, Any]) -> "BaseModelConfig":
+        """Create a BaseModelConfig instance from YAML configuration"""
+        # Convert string enums to actual enum types
+        config_dict = yaml_config.copy()
+        
+        if 'activation' in config_dict and isinstance(config_dict['activation'], str):
+            config_dict['activation'] = str_to_activation_type(config_dict['activation'])
+        
+        if 'norm' in config_dict and isinstance(config_dict['norm'], str):
+            config_dict['norm'] = str_to_norm_type(config_dict['norm'])
+        
+        logger.info(f"Creating model config for '{model_name}' from YAML")
+        return cls(**config_dict)
+    
+    @classmethod
+    def create_from_name(cls, name: str) -> "BaseModelConfig":
+        """
+        Create a model config from name.
+        First checks YAML config file, then falls back to hardcoded subclasses.
+        """
+        # Try loading from YAML first
+        yaml_configs = load_yaml_model_configs()
+        if name in yaml_configs:
+            logger.info(f"Using YAML configuration for model: {name}")
+            return cls.create_from_yaml(name, yaml_configs[name])
+        
+        # Fall back to hardcoded configs
+        logger.info(f"Using hardcoded configuration for model: {name}")
+        from vidur.config.utils import get_all_subclasses
+        for subclass in get_all_subclasses(cls):
+            if hasattr(subclass, 'get_name') and subclass.get_name() == name:
+                return subclass()
+        
+        raise ValueError(f"[{cls.__name__}] Invalid model name: {name}. "
+                        f"Add it to model_configs.yaml or as a Python subclass.")
 
 
 @dataclass
