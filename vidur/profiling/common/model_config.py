@@ -63,6 +63,9 @@ class ModelConfig:
     def from_model_name(model_name: str):
         model_config: BaseModelConfig = BaseModelConfig.create_from_name(model_name)
         model_config_dict = asdict(model_config)
+        
+        # Remove fields that are not part of ModelConfig.__init__()
+        model_config_dict.pop('_model_name', None)
 
         return ModelConfig(model_name, **model_config_dict)
 

@@ -1,0 +1,32 @@
+name: vidur
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+  - plotly
+dependencies:
+  - python=3.10
+  - setuptools
+  - pip
+  - pytorch
+  - pytorch-cuda=12.1
+  - torchvision
+  - torchaudio
+  - numpy
+  - plotly_express
+  - jupyterlab
+  - matplotlib
+  - pyyaml
+  - snakeviz
+  - scikit-learn
+  - python-kaleido
+  - wandb
+  - fasteners
+  - ray-all
+  - streamlit
+  - randomname
+  - pip:
+    - kaleido
+    - ddsketch
+    - paretoset
+

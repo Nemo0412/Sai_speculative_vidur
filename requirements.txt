@@ -8,3 +8,7 @@ plotly_express
 matplotlib
 seaborn
 fasteners
+tqdm
+pyyaml
+ray
+torch
