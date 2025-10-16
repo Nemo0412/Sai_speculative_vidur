@@ -41,3 +41,13 @@ class H100DeviceSKUConfig(BaseDeviceSKUConfig):
     @staticmethod
     def get_type():
         return DeviceSKUType.H100
+
+
+@dataclass
+class V100DeviceSKUConfig(BaseDeviceSKUConfig):
+    fp16_tflops: int = 125
+    total_memory_gb: int = 32
+
+    @staticmethod
+    def get_type():
+        return DeviceSKUType.V100

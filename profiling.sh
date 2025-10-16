@@ -17,7 +17,7 @@
 # ============================================================================
 # 配置区域 - 只需修改这里
 # ============================================================================
-MODEL_NAME="Qwen/Qwen-7B"  # 修改为你要 profile 的模型名称
+MODEL_NAME="${MODEL_NAME:-Qwen/Qwen-7B}"  # 使用环境变量，如果未设置则默认为 Qwen/Qwen-7B
 # 其他示例:
 # MODEL_NAME="meta-llama/Llama-2-7b-hf"
 # MODEL_NAME="meta-llama/Meta-Llama-3-8B"
@@ -105,6 +105,12 @@ elif [[ $GPU_INFO == *"H100"* ]]; then
 elif [[ $GPU_INFO == *"A40"* ]]; then
     GPU_TYPE="A40"
     GPU_TYPE_LOWER="a40"
+elif [[ $GPU_INFO == *"V100"* ]]; then
+    GPU_TYPE="V100"
+    GPU_TYPE_LOWER="v100"
+elif [[ $GPU_INFO == *"L40S"* ]] || [[ $GPU_INFO == *"L40s"* ]]; then
+    GPU_TYPE="L40S"
+    GPU_TYPE_LOWER="l40s"
 else
     print_warning "Unknown GPU type: $GPU_INFO"
     print_warning "Defaulting to A100"
