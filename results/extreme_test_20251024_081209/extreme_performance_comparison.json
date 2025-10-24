@@ -1,0 +1,30 @@
+{
+  "vanilla": {
+    "version": "vanilla",
+    "routing_algorithm": "round_robin",
+    "scheduling_algorithm": "fifo",
+    "total_requests": 214,
+    "completed_requests": 144,
+    "completion_rate": 0.6728971962616822,
+    "average_response_time": 0.0352,
+    "throughput": 2.399999999999977,
+    "simulation_time": 0.0019714832305908203
+  },
+  "optimized": {
+    "version": "optimized",
+    "routing_algorithm": "least_loaded",
+    "scheduling_algorithm": "shortest_job_first",
+    "total_requests": 242,
+    "completed_requests": 172,
+    "completion_rate": 0.7107438016528925,
+    "average_response_time": 0.028758169934640525,
+    "throughput": 2.8666666666666387,
+    "simulation_time": 0.0029616355895996094
+  },
+  "improvements": {
+    "completion_rate": 5.624426078971534,
+    "response_time": 18.30065359477124,
+    "throughput": 19.444444444444432,
+    "total_improvement": 12.534435261707983
+  }
+}

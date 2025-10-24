@@ -1,0 +1,65 @@
+[
+  {
+    "routing": "shortest_queue",
+    "scheduling": "shortest_job_first",
+    "average_response_time": 0.003703703703703704,
+    "throughput": 1.439999999999995,
+    "completion_rate": 0.72
+  },
+  {
+    "routing": "shortest_queue",
+    "scheduling": "fifo",
+    "average_response_time": 0.0032258064516129032,
+    "throughput": 1.5999999999999945,
+    "completion_rate": 0.7407407407407407
+  },
+  {
+    "routing": "shortest_queue",
+    "scheduling": "priority",
+    "average_response_time": 0.004347826086956522,
+    "throughput": 1.2799999999999956,
+    "completion_rate": 0.6956521739130435
+  },
+  {
+    "routing": "least_loaded",
+    "scheduling": "shortest_job_first",
+    "average_response_time": 0.004761904761904762,
+    "throughput": 1.199999999999996,
+    "completion_rate": 0.6818181818181818
+  },
+  {
+    "routing": "least_loaded",
+    "scheduling": "fifo",
+    "average_response_time": 0.004347826086956522,
+    "throughput": 1.2799999999999956,
+    "completion_rate": 0.6956521739130435
+  },
+  {
+    "routing": "least_loaded",
+    "scheduling": "priority",
+    "average_response_time": 0.003448275862068966,
+    "throughput": 1.519999999999995,
+    "completion_rate": 0.7307692307692307
+  },
+  {
+    "routing": "round_robin",
+    "scheduling": "shortest_job_first",
+    "average_response_time": 0.003703703703703704,
+    "throughput": 1.439999999999995,
+    "completion_rate": 0.72
+  },
+  {
+    "routing": "round_robin",
+    "scheduling": "fifo",
+    "average_response_time": 0.004,
+    "throughput": 1.3599999999999954,
+    "completion_rate": 0.7083333333333334
+  },
+  {
+    "routing": "round_robin",
+    "scheduling": "priority",
+    "average_response_time": 0.002857142857142857,
+    "throughput": 1.759999999999994,
+    "completion_rate": 0.7586206896551724
+  }
+]

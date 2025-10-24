@@ -1,0 +1,11 @@
+{
+  "version": "optimized",
+  "routing_algorithm": "least_loaded",
+  "scheduling_algorithm": "shortest_job_first",
+  "total_requests": 242,
+  "completed_requests": 172,
+  "completion_rate": 0.7107438016528925,
+  "average_response_time": 0.028758169934640525,
+  "throughput": 2.8666666666666387,
+  "simulation_time": 0.0029616355895996094
+}

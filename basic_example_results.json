@@ -1,0 +1,25 @@
+{
+  "configuration": {
+    "k_draft_models": 3,
+    "n_target_models": 4,
+    "router_queue_size": 10,
+    "routing_algorithm": "shortest_queue",
+    "scheduling_algorithm": "shortest_job_first",
+    "simulation_time": 100.0
+  },
+  "results": {
+    "total_requests": 104,
+    "completed_requests": 64,
+    "completion_rate": 0.6153846153846154,
+    "total_processing_time": 0.0,
+    "average_response_time": 0.0018181818181818182,
+    "throughput": 1.2799999999999887,
+    "router_utilization": 0.0,
+    "target_utilizations": [
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ]
+  }
+}

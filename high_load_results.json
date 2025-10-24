@@ -1,0 +1,83 @@
+{
+  "round_robin_fifo": {
+    "routing": "round_robin",
+    "scheduling": "fifo",
+    "completion_rate": 0.7572815533980582,
+    "average_response_time": 0.032116788321167884,
+    "throughput": 3.1199999999999726,
+    "total_requests": 206,
+    "completed_requests": 156
+  },
+  "round_robin_shortest_job_first": {
+    "routing": "round_robin",
+    "scheduling": "shortest_job_first",
+    "completion_rate": 0.7549019607843137,
+    "average_response_time": 0.0325925925925926,
+    "throughput": 3.079999999999973,
+    "total_requests": 204,
+    "completed_requests": 154
+  },
+  "round_robin_priority": {
+    "routing": "round_robin",
+    "scheduling": "priority",
+    "completion_rate": 0.7078651685393258,
+    "average_response_time": 0.041121495327102804,
+    "throughput": 2.519999999999978,
+    "total_requests": 178,
+    "completed_requests": 126
+  },
+  "shortest_queue_fifo": {
+    "routing": "shortest_queue",
+    "scheduling": "fifo",
+    "completion_rate": 0.7373737373737373,
+    "average_response_time": 0.03464566929133858,
+    "throughput": 2.919999999999974,
+    "total_requests": 198,
+    "completed_requests": 146
+  },
+  "shortest_queue_shortest_job_first": {
+    "routing": "shortest_queue",
+    "scheduling": "shortest_job_first",
+    "completion_rate": 0.7422680412371134,
+    "average_response_time": 0.0352,
+    "throughput": 2.8799999999999746,
+    "total_requests": 194,
+    "completed_requests": 144
+  },
+  "shortest_queue_priority": {
+    "routing": "shortest_queue",
+    "scheduling": "priority",
+    "completion_rate": 0.7311827956989247,
+    "average_response_time": 0.03760683760683761,
+    "throughput": 2.719999999999976,
+    "total_requests": 186,
+    "completed_requests": 136
+  },
+  "least_loaded_fifo": {
+    "routing": "least_loaded",
+    "scheduling": "fifo",
+    "completion_rate": 0.7311827956989247,
+    "average_response_time": 0.03760683760683761,
+    "throughput": 2.719999999999976,
+    "total_requests": 186,
+    "completed_requests": 136
+  },
+  "least_loaded_shortest_job_first": {
+    "routing": "least_loaded",
+    "scheduling": "shortest_job_first",
+    "completion_rate": 0.7685185185185185,
+    "average_response_time": 0.02993197278911565,
+    "throughput": 3.3199999999999705,
+    "total_requests": 216,
+    "completed_requests": 166
+  },
+  "least_loaded_priority": {
+    "routing": "least_loaded",
+    "scheduling": "priority",
+    "completion_rate": 0.7727272727272727,
+    "average_response_time": 0.02913907284768212,
+    "throughput": 3.39999999999997,
+    "total_requests": 220,
+    "completed_requests": 170
+  }
+}
